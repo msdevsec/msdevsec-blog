@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        String    @default("USER") // "USER" or "ADMIN"
+  isPremium   Boolean   @default(false)
+  posts       Post[]    // Only for admin users
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  content     String    @db.Text
+  published   Boolean   @default(false)
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  category    String    // "CODE_TUTORIAL" or "PENTESTING"
+  slug        String    @unique // URL-friendly version of title
+  excerpt     String?   // Short description for preview
+  
+  @@index([authorId])
+  @@index([category])
+  @@index([slug])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([postId])
+}

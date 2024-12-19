@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cherrytree>
+  <bookmarks list="4"/>
+  <node name="PRISMA" unique_id="2" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734572758" ts_lastsave="1734574845">
+    <rich_text>
+ Generate Prisma client
+docker-compose run --rm backend npx prisma generate
+
+# Run migrations
+docker-compose run --rm backend npx prisma migrate dev --name init
+
+docker-compose exec backend npx prisma studio</rich_text>
+  </node>
+  <node name="admin creation" unique_id="3" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734572919" ts_lastsave="1734573405">
+    <rich_text>###generate hash
+docker-compose exec backend node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('Admin123456', 10).then(hash =&gt; console.log(hash));"
+
+$2a$10$2G6IgUGEXfFyGX6.ENbxQ.wuP2ceG2fOliU0BeDgrA9hgKeajGqlq
+
+##open prisma studio
+docker-compose exec backend npx prisma studio
+
+
+
+This will open Prisma Studio at http://localhost:5555 where you can:
+1. Click on "User" model
+2. Click "Add record"
+3. Fill in the fields:• email: your@email.com
+• firstName: MSDEVSEC
+• lastName: (leave empty)
+• password: (paste the hashed password from step 2)
+• role: "ADMIN"
+• isPremium: false
+• The createdAt and updatedAt fields will be auto-filled
+
+
+You can then verify the admin user by logging in through the API:
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@msdevsec.com",
+    "password": "Admin123456"
+  }'</rich_text>
+  </node>
+  <node name="USER CREATE API" unique_id="4" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734573351" ts_lastsave="1734575045">
+    <rich_text>ADMIN BLOCKED VIA API
+
+curl -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Test",
+    "lastName": "Admin",
+    "email": "admin@test.com",
+    "password": "Admin123!",
+    "confirmPassword": "Admin123!",
+    "role": "ADMIN"
+  }'
+  
+You should see a response like:
+{
+  "message": "Registering admin accounts is not permitted through the API. Please contact MSDEVSEC support for assistance."
+}
+1. Test registering a normal user (this should work):
+curl -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "user@test.com",
+    "password": "User123!",
+    "confirmPassword": "User123!"
+  }'
+  
+  
+  You can then verify the admin user by logging in through the API:
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@test.com",
+    "password": "User123!"
+  }'</rich_text>
+  </node>
+  <node name="POTS &amp; COMMENTS" unique_id="5" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734573816" ts_lastsave="1734573821">
+    <rich_text># Posts Management
+POST /api/posts - Create new post
+PUT /api/posts/:id - Update post
+DELETE /api/posts/:id - Delete post
+
+# Comments Management
+GET /api/comments/all - List all comments
+PUT /api/comments/:id - Update comment
+DELETE /api/comments/:id - Delete comment
+
+# Admin Dashboard
+GET /api/admin/dashboard - Get admin endpoints info
+Regular User Routes:
+
+# Posts (public)
+GET /api/posts - List published posts
+GET /api/posts/:identifier - Get single post
+
+# Comments (requires auth)
+POST /api/comments - Create comment on published post</rich_text>
+  </node>
+  <node name="POST &amp; COMMENTS API TEST" unique_id="6" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734573834" ts_lastsave="1734574378">
+    <rich_text>Let's test the admin functionality:
+1. Login as admin:
+
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@msdevsec.com",
+    "password": "Admin123456"
+  }'
+  
+1. Create a post (use the token from login response):
+
+curl -X POST http://localhost:4000/api/posts \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzY0eWEwMDAwYmwybHdueHZvaDd4Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MzQ1NzQzMjAsImV4cCI6MTczNDY2MDcyMH0.dZf4OHsPnjWHCn6zlRaRxYOuKV0_peCHvsIiQS8F-xo" \
+  -d '{
+    "title": "First Tutorial",
+    "content": "This is a test tutorial post",
+    "category": "CODE_TUTORIAL",
+    "published": true
+  }'
+  
+1. Test regular user comment creation:
+
+# First register a regular user
+curl -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "user@test.com",
+    "password": "User123!",
+    "confirmPassword": "User123!"
+  }'
+  
+  2.
+  
+  You can then verify the admin user by logging in through the API:
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@test.com",
+    "password": "User123!"
+  }'  
+
+
+  
+
+# Then create a comment using the user token
+curl -X POST http://localhost:4000/api/comments \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzY0eWEwMDAwYmwybHdueHZvaDd4Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MzQ1NzQzMjAsImV4cCI6MTczNDY2MDcyMH0.dZf4OHsPnjWHCn6zlRaRxYOuKV0_peCHvsIiQS8F-xo" \
+  -d '{
+    "postId": "</rich_text>
+    <rich_text background="#616161" foreground="#f8f8f8">cm4uoo9pa0001j5wxwzizzyib</rich_text>
+    <rich_text>",
+    "content": "Great tutorial!"
+  }'</rich_text>
+  </node>
+  <node name="FILTERING" unique_id="7" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734574404" ts_lastsave="1734575060">
+    <rich_text>1. Get all posts:
+curl </rich_text>
+    <rich_text link="webs http://localhost:4000/api/posts">http://localhost:4000/api/posts</rich_text>
+    <rich_text>
+
+1. Get the specific post by ID:
+curl </rich_text>
+    <rich_text link="webs http://localhost:4000/api/posts/cm4uoo9pa0001j5wxwzizzyib">http://localhost:4000/api/posts/cm4uoo9pa0001j5wxwzizzyib</rich_text>
+    <rich_text>
+
+
+1. Update the post (using admin token):
+
+curl -X PUT http://localhost:4000/api/posts/cm4uoo9pa0001j5wxwzizzyib \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzY0eWEwMDAwYmwybHdueHZvaDd4Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MzQ1NzQzMjAsImV4cCI6MTczNDY2MDcyMH0.dZf4OHsPnjWHCn6zlRaRxYOuKV0_peCHvsIiQS8F-xo" \
+  -d '{
+    "title": "Updated Tutorial Title",
+    "content": "This is the updated content of the tutorial",
+    "excerpt": "A brief overview of the tutorial"
+  }'
+  
+  
+  
+  1. View all comments as admin:
+  
+ curl http://localhost:4000/api/comments/all \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzY0eWEwMDAwYmwybHdueHZvaDd4Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MzQ1NzQzMjAsImV4cCI6MTczNDY2MDcyMH0.dZf4OHsPnjWHCn6zlRaRxYOuKV0_peCHvsIiQS8F-xo"</rich_text>
+  </node>
+  <node name="VISIBILITY" unique_id="8" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734574702" ts_lastsave="1734575164">
+    <rich_text>TOGGLE THE POST VISIBLE AND NOT:
+
+$ curl -X PATCH </rich_text>
+    <rich_text link="webs http://localhost:4000/api/posts/cm4uoxsxh0005j5wxnh9hj1es/toggle-visibility">http://localhost:4000/api/posts/cm4uoxsxh0005j5wxnh9hj1es/toggle-visibility</rich_text>
+    <rich_text> \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzhzM2wwMDAwdTZkZWc0dWNvdWVvIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzM0NTczNDkzLCJleHAiOjE3MzQ2NTk4OTN9.GHjTqvVkQ7OvbWcfFISe2jfG1NTlexh_ZTS2tWvs_UM"
+{"message":"Post is now visible","post":{"id":"cm4uoxsxh0005j5wxnh9hj1es","title":"Draft Tutorial","content":"This is an unpublished tutorial","published":true,"authorId":"cm4uo8s3l0000u6deg4ucoueo","createdAt":"2024-12-19T02:16:52.661Z","updatedAt":"2024-12-19T02:21:42.167Z","category":"CODE_TUTORIAL","slug":"draft-tutorial","excerpt":null}}
+MSSPIDER MINGW64 /h/PROGRAMMING/DEVSEC
+$ curl -X PATCH </rich_text>
+    <rich_text link="webs http://localhost:4000/api/posts/cm4uoxsxh0005j5wxnh9hj1es/toggle-visibility">http://localhost:4000/api/posts/cm4uoxsxh0005j5wxnh9hj1es/toggle-visibility</rich_text>
+    <rich_text>   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzY0eWEwMDAwYmwybHdueHZvaDd4Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MzQ1NzQzMjAsImV4cCI6MTczNDY2MDcyMH0.dZf4OHsPnjWHCn6zlRaRxYOuKV0_peCHvsIiQS8F-xo"
+{"message":"Post is now hidden","post":{"id":"cm4uoxsxh0005j5wxnh9hj1es","title":"Draft Tutorial","content":"This is an unpublished tutorial","published":false,"authorId":"cm4uo8s3l0000u6deg4ucoueo","createdAt":"2024-12-19T02:16:52.661Z","updatedAt":"2024-12-19T02:21:52.737Z","category":"CODE_TUTORIAL","slug":"draft-tutorial","excerpt":null}}
+MSSPIDER MINGW64 /h/PROGRAMMING/DEVSEC
+$ </rich_text>
+  </node>
+  <node name="DELETE FUNCTIONALITY" unique_id="9" prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" ts_creation="1734575164" ts_lastsave="1734575271">
+    <rich_text>c</rich_text>
+    <rich_text family="monospace">url http://localhost:4000/api/posts \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzhzM2wwMDAwdTZkZWc0dWNvdWVvIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzM0NTczNDkzLCJleHAiOjE3MzQ2NTk4OTN9.GHjTqvVkQ7OvbWcfFISe2jfG1NTlexh_ZTS2tWvs_UM"
+  
+</rich_text>
+    <rich_text>1. Then delete a post using its ID:
+</rich_text>
+    <rich_text family="monospace">curl -X DELETE http://localhost:4000/api/posts/cm4uoxsxh0005j5wxnh9hj1es \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzhzM2wwMDAwdTZkZWc0dWNvdWVvIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzM0NTczNDkzLCJleHAiOjE3MzQ2NTk4OTN9.GHjTqvVkQ7OvbWcfFISe2jfG1NTlexh_ZTS2tWvs_UM"
+  
+</rich_text>
+    <rich_text>1. Verify the post is deleted by trying to fetch it:
+</rich_text>
+    <rich_text family="monospace">curl http://localhost:4000/api/posts/cm4uoxsxh0005j5wxnh9hj1es \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbTR1bzhzM2wwMDAwdTZkZWc0dWNvdWVvIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzM0NTczNDkzLCJleHAiOjE3MzQ2NTk4OTN9.GHjTqvVkQ7OvbWcfFISe2jfG1NTlexh_ZTS2tWvs_UM"</rich_text>
+  </node>
+</cherrytree>
